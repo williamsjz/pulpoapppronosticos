@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#080B14" />
+  <meta name="description" content="El Oráculo del Pulpo — Predictor místico del Mundial FIFA 2026" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Oráculo" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon_192.png" />
+  <link rel="icon" href="icon_192.png" />
+  <title>El Oráculo del Pulpo 🔮</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-deep:      #080B14;
+      --neon-purple:  #A855F7;
+      --neon-emerald: #10F5A0;
+      --text-primary: #F0EEF8;
+      --font-title:   'Cinzel Decorative', serif;
+      --font-heading: 'Cinzel', serif;
+      --font-body:    'Inter', sans-serif;
+    }
+    html, body { height: 100%; overflow-x: hidden; }
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      overscroll-behavior: none;
+    }
+    #root { min-height: 100vh; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #A855F7; border-radius: 2px; }
+
+    @keyframes float      { 0%,100%{transform:translateY(0)}  50%{transform:translateY(-12px)} }
+    @keyframes pulse-glow { 0%,100%{opacity:.5}               50%{opacity:1} }
+    @keyframes orb-spin   { from{transform:rotate(0deg)}       to{transform:rotate(360deg)} }
+    @keyframes fadeUp     { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes ripple     { 0%{transform:scale(1);opacity:.5}  100%{transform:scale(2.4);opacity:0} }
+    @keyframes starTwinkle{ 0%,100%{opacity:.1}                50%{opacity:.85} }
+    @keyframes eyeBlink   { 0%,85%,100%{transform:scaleY(1)}   92%{transform:scaleY(.08)} }
+    @keyframes slideIn    { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+    @keyframes confirmPop { 0%{transform:scale(.92);opacity:0} 100%{transform:scale(1);opacity:1} }
+    @keyframes shine      { 0%{left:-100%} 100%{left:200%} }
+
+    .panel {
+      background: rgba(13,18,32,.9);
+      border: 1px solid rgba(168,85,247,.22);
+      border-radius: 20px;
+      padding: 1.1rem;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 8px 32px rgba(0,0,0,.55), inset 0 1px 0 rgba(168,85,247,.1);
+    }
+    .match-pill {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: .65rem .85rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(0,0,0,.25);
+      cursor: pointer;
+      transition: all .2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .match-pill.selected {
+      border-color: rgba(168,85,247,.6);
+      background: rgba(88,28,135,.22);
+      box-shadow: 0 0 18px rgba(168,85,247,.2);
+    }
+    .match-pill.done {
+      border-color: rgba(16,245,160,.25);
+      background: rgba(5,95,69,.1);
+      cursor: default;
+    }
+    .match-pill.consulting-pill {
+      border-color: rgba(168,85,247,.8);
+      animation: pulse-glow 1s ease-in-out infinite;
+    }
+    .match-pill:not(.done):not(.consulting-pill):hover {
+      border-color: rgba(168,85,247,.4);
+      background: rgba(88,28,135,.15);
+    }
+    .btn-oracle {
+      width: 100%;
+      padding: .9rem;
+      border-radius: 14px;
+      border: 1px solid rgba(168,85,247,.45);
+      background: linear-gradient(135deg,rgba(88,28,135,.92) 0%,rgba(109,40,217,.9) 50%,rgba(5,150,105,.35) 100%);
+      color: #F0EEF8;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      cursor: pointer;
+      font-family: var(--font-heading);
+      box-shadow: 0 0 26px rgba(168,85,247,.38), 0 4px 18px rgba(0,0,0,.45);
+      transition: all .25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-oracle:active:not(:disabled) { transform: scale(.97); }
+    .btn-oracle:disabled {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      color: rgba(255,255,255,.22);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .score-gradient {
+      background: linear-gradient(180deg,#10F5A0,#05B876);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .title-gradient {
+      background: linear-gradient(135deg,#A855F7 0%,#7C3AED 40%,#10F5A0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      background: rgba(168,85,247,.1);
+      border: 1px solid rgba(168,85,247,.3);
+      border-radius: 12px;
+      padding: .55rem 2rem .55rem 1rem;
+      color: #E9D5FF;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-body);
+      width: 100%;
+      outline: none;
+    }
+    /* Overlay de consulta */
+    .oracle-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(8,11,20,.92);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1.5rem;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      animation: fadeUp .3s ease-out both;
+    }
+    /* Tarjeta de resultado expandida */
+    .result-card {
+      background: linear-gradient(135deg,#0D1520 0%,#0A1428 60%,#0D1520 100%);
+      border: 1px solid rgba(16,245,160,.22);
+      border-radius: 20px;
+      padding: 1.25rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 40px rgba(0,0,0,.6), inset 0 1px 0 rgba(16,245,160,.08);
+      animation: slideIn .45s ease-out both;
+    }
+    /* Badge de confirmación */
+    .confirm-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: .35rem .85rem;
+      border-radius: 20px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: all .2s ease;
+    }
+    .confirm-badge.win  { background:rgba(16,245,160,.12); border:1px solid rgba(16,245,160,.4); color:#10F5A0; }
+    .confirm-badge.loss { background:rgba(239,68,68,.1);   border:1px solid rgba(239,68,68,.35); color:#FCA5A5; }
+    .confirm-badge.draw { background:rgba(168,85,247,.1);  border:1px solid rgba(168,85,247,.4); color:#D8B4FE; }
+    .confirm-badge.confirmed-win  { background:rgba(16,245,160,.22); border-color:rgba(16,245,160,.7); }
+    .confirm-badge.confirmed-loss { background:rgba(239,68,68,.2);   border-color:rgba(239,68,68,.6); }
+    .confirm-badge.confirmed-draw { background:rgba(168,85,247,.22); border-color:rgba(168,85,247,.7); }
+
+    /* Shimmer en btn al seleccionar */
+    .btn-oracle.ready { position:relative; overflow:hidden; }
+    .btn-oracle.ready::after {
+      content:''; position:absolute; top:0; left:-100%;
+      width:60%; height:100%;
+      background: linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
+      animation: shine 2s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+/* ─── DATOS ─── */
+var TEAMS = {
+  MX:{n:'México'},ZA:{n:'Sudáfrica'},KR:{n:'Corea del Sur'},CZ:{n:'Rep. Checa'},
+  BR:{n:'Brasil'},MA:{n:'Marruecos'},SQ:{n:'Escocia',fc:'gb-sct'},HT:{n:'Haití'},
+  NL:{n:'Países Bajos'},JP:{n:'Japón'},SE:{n:'Suecia'},TN:{n:'Túnez'},
+  US:{n:'EE.UU.'},PY:{n:'Paraguay'},AU:{n:'Australia'},TR:{n:'Turquía'},
+  BE:{n:'Bélgica'},EG:{n:'Egipto'},IR:{n:'Irán'},NZ:{n:'Nueva Zelanda'},
+  EN:{n:'Inglaterra',fc:'gb-eng'},HR:{n:'Croacia'},GH:{n:'Ghana'},PA:{n:'Panamá'},
+  FR:{n:'Francia'},SN:{n:'Senegal'},IQ:{n:'Irak'},NO:{n:'Noruega'},
+  ES:{n:'España'},CV:{n:'Cabo Verde'},SA:{n:'Arabia Saudita'},UY:{n:'Uruguay'},
+  PT:{n:'Portugal'},CD:{n:'R.D. Congo'},UZ:{n:'Uzbekistán'},CO:{n:'Colombia'},
+  QA:{n:'Catar'},CH:{n:'Suiza'},CA:{n:'Canadá'},BA:{n:'Bosnia'},
+  DE:{n:'Alemania'},CW:{n:'Curazao'},CI:{n:'Costa de Marfil'},EC:{n:'Ecuador'},
+  AR:{n:'Argentina'},DZ:{n:'Argelia'},AT:{n:'Austria'},JO:{n:'Jordania'}
+};
+var MATCHUPS = [
+  {g:'A',h:'MX',a:'ZA',d:'11 Jun 2026'},{g:'A',h:'KR',a:'CZ',d:'11 Jun 2026'},
+  {g:'A',h:'MX',a:'KR',d:'18 Jun 2026'},{g:'A',h:'CZ',a:'ZA',d:'18 Jun 2026'},
+  {g:'A',h:'CZ',a:'MX',d:'24 Jun 2026'},{g:'A',h:'ZA',a:'KR',d:'24 Jun 2026'},
+  {g:'B',h:'BR',a:'MA',d:'13 Jun 2026'},{g:'B',h:'SQ',a:'HT',d:'13 Jun 2026'},
+  {g:'B',h:'BR',a:'HT',d:'19 Jun 2026'},{g:'B',h:'SQ',a:'MA',d:'19 Jun 2026'},
+  {g:'B',h:'SQ',a:'BR',d:'24 Jun 2026'},{g:'B',h:'MA',a:'HT',d:'24 Jun 2026'},
+  {g:'C',h:'NL',a:'JP',d:'14 Jun 2026'},{g:'C',h:'SE',a:'TN',d:'14 Jun 2026'},
+  {g:'C',h:'NL',a:'SE',d:'20 Jun 2026'},{g:'C',h:'TN',a:'JP',d:'20 Jun 2026'},
+  {g:'C',h:'TN',a:'NL',d:'25 Jun 2026'},{g:'C',h:'JP',a:'SE',d:'25 Jun 2026'},
+  {g:'D',h:'US',a:'PY',d:'12 Jun 2026'},{g:'D',h:'AU',a:'TR',d:'13 Jun 2026'},
+  {g:'D',h:'US',a:'AU',d:'19 Jun 2026'},{g:'D',h:'TR',a:'PY',d:'19 Jun 2026'},
+  {g:'D',h:'TR',a:'US',d:'25 Jun 2026'},{g:'D',h:'PY',a:'AU',d:'25 Jun 2026'},
+  {g:'E',h:'BE',a:'EG',d:'15 Jun 2026'},{g:'E',h:'IR',a:'NZ',d:'15 Jun 2026'},
+  {g:'E',h:'BE',a:'IR',d:'21 Jun 2026'},{g:'E',h:'NZ',a:'EG',d:'21 Jun 2026'},
+  {g:'E',h:'NZ',a:'BE',d:'26 Jun 2026'},{g:'E',h:'EG',a:'IR',d:'26 Jun 2026'},
+  {g:'F',h:'EN',a:'HR',d:'17 Jun 2026'},{g:'F',h:'GH',a:'PA',d:'17 Jun 2026'},
+  {g:'F',h:'EN',a:'GH',d:'23 Jun 2026'},{g:'F',h:'PA',a:'HR',d:'23 Jun 2026'},
+  {g:'F',h:'PA',a:'EN',d:'27 Jun 2026'},{g:'F',h:'HR',a:'GH',d:'27 Jun 2026'},
+  {g:'G',h:'FR',a:'SN',d:'16 Jun 2026'},{g:'G',h:'IQ',a:'NO',d:'16 Jun 2026'},
+  {g:'G',h:'FR',a:'IQ',d:'22 Jun 2026'},{g:'G',h:'NO',a:'SN',d:'22 Jun 2026'},
+  {g:'G',h:'NO',a:'FR',d:'26 Jun 2026'},{g:'G',h:'SN',a:'IQ',d:'26 Jun 2026'},
+  {g:'H',h:'ES',a:'CV',d:'15 Jun 2026'},{g:'H',h:'SA',a:'UY',d:'15 Jun 2026'},
+  {g:'H',h:'ES',a:'SA',d:'21 Jun 2026'},{g:'H',h:'UY',a:'CV',d:'21 Jun 2026'},
+  {g:'H',h:'UY',a:'ES',d:'26 Jun 2026'},{g:'H',h:'CV',a:'SA',d:'26 Jun 2026'},
+  {g:'I',h:'PT',a:'CD',d:'17 Jun 2026'},{g:'I',h:'UZ',a:'CO',d:'17 Jun 2026'},
+  {g:'I',h:'PT',a:'UZ',d:'23 Jun 2026'},{g:'I',h:'CO',a:'CD',d:'23 Jun 2026'},
+  {g:'I',h:'CO',a:'PT',d:'27 Jun 2026'},{g:'I',h:'CD',a:'UZ',d:'27 Jun 2026'},
+  {g:'J',h:'QA',a:'CH',d:'13 Jun 2026'},{g:'J',h:'CA',a:'BA',d:'12 Jun 2026'},
+  {g:'J',h:'CH',a:'BA',d:'18 Jun 2026'},{g:'J',h:'CA',a:'QA',d:'18 Jun 2026'},
+  {g:'J',h:'CH',a:'CA',d:'24 Jun 2026'},{g:'J',h:'BA',a:'QA',d:'24 Jun 2026'},
+  {g:'K',h:'DE',a:'CW',d:'14 Jun 2026'},{g:'K',h:'CI',a:'EC',d:'14 Jun 2026'},
+  {g:'K',h:'DE',a:'CI',d:'20 Jun 2026'},{g:'K',h:'EC',a:'CW',d:'20 Jun 2026'},
+  {g:'K',h:'CW',a:'CI',d:'25 Jun 2026'},{g:'K',h:'EC',a:'DE',d:'25 Jun 2026'},
+  {g:'L',h:'AR',a:'DZ',d:'16 Jun 2026'},{g:'L',h:'AT',a:'JO',d:'16 Jun 2026'},
+  {g:'L',h:'AR',a:'AT',d:'22 Jun 2026'},{g:'L',h:'JO',a:'DZ',d:'22 Jun 2026'},
+  {g:'L',h:'DZ',a:'AT',d:'27 Jun 2026'},{g:'L',h:'JO',a:'AR',d:'27 Jun 2026'}
+];
+var ELO = {
+  'Argentina':2140,'Francia':2110,'Brasil':2080,'España':2040,'Inglaterra':2030,
+  'Portugal':2000,'Países Bajos':1980,'Alemania':1970,'Uruguay':1930,'Colombia':1900,
+  'Croacia':1890,'Bélgica':1880,'Marruecos':1850,'EE.UU.':1800,'México':1780,
+  'Japón':1770,'Senegal':1750,'Ecuador':1740,'Suiza':1730,'Suecia':1720,
+  'Australia':1700,'Irán':1690,'Canadá':1680,'Rep. Checa':1670,'Noruega':1660,
+  'Turquía':1650,'Escocia':1640,'Corea del Sur':1630,'Costa de Marfil':1620,
+  'Ghana':1610,'Egipto':1590,'Túnez':1570,'Panamá':1550,'Bosnia':1540,
+  'Paraguay':1530,'Catar':1520,'Arabia Saudita':1510,'Uzbekistán':1490,
+  'Irak':1480,'Cabo Verde':1470,'Argelia':1460,'Sudáfrica':1450,'Haití':1440,
+  'Curazao':1430,'R.D. Congo':1420,'Jordania':1400,'Nueva Zelanda':1390
+};
+var DATES = (function(){
+  var s = {}; MATCHUPS.forEach(function(m){ s[m.d]=1; });
+  return Object.keys(s).sort(function(a,b){ return new Date(a)-new Date(b); });
+})();
+var QUOTES = {
+  win:[
+    'Las mareas profundas eligieron a {w}. El marcador es su destino sellado.',
+    'Mis tentáculos señalan a {w}. Las corrientes oceánicas no mienten.',
+    'Vi en las profundidades el triunfo de {w}. El abismo lo confirma.',
+    '{w} emerge del caos. Los algoritmos y el cosmos coinciden.',
+    'La oscuridad reveló el nombre: {w}. El resultado existía antes del pitido.'
+  ],
+  draw:[
+    'Dos fuerzas iguales colisionan. El empate es la única verdad posible.',
+    'El equilibrio cósmico exige tablas. Ningún campeón nacerá hoy.',
+    'Las corrientes se anulan mutuamente. El océano dictamina: tablas.'
+  ],
+  chaos:[
+    'Las aguas están perturbadas. Una sorpresa acecha en las sombras.',
+    'El caos gobierna este encuentro. La incertidumbre es la única certeza.',
+    'Percibo turbulencia cósmica. El destino de este partido es indescifrable.'
+  ]
+};
+var TRANCE = [
+  'Calculando distribuciones de Poisson...',
+  'Procesando coeficientes ELO mundiales...',
+  'Consultando las corrientes del destino...',
+  'Ejecutando simulaciones Monte Carlo...',
+  'Leyendo patrones históricos del abismo...',
+  'El Oráculo está descifrando el futuro...'
+];
+
+/* ─── HELPERS ─── */
+function flagUrl(code) {
+  var t = TEAMS[code];
+  return 'https://flagcdn.com/w80/' + ((t && t.fc) ? t.fc : code.toLowerCase()) + '.png';
+}
+function tn(code) { return (TEAMS[code] && TEAMS[code].n) || code; }
+function poissonSample(lambda) {
+  var L=Math.exp(-lambda), k=0, p=1;
+  do { k++; p*=Math.random(); } while(p>L);
+  return Math.max(0,k-1);
+}
+function predict(homeName, awayName) {
+  var eH=ELO[homeName]||1500, eA=ELO[awayName]||1500;
+  var diff=eH-eA+50;
+  var pH=1/(1+Math.pow(10,-diff/400)), pA=1-pH;
+  var hG=poissonSample(1.25*pH/0.5), aG=poissonSample(1.25*pA/0.5);
+  var conf=Math.min(97,Math.max(42,Math.round(50+(Math.abs(diff)/400)*40+(Math.random()*10-5))));
+  var winner=hG>aG?homeName:aG>hG?awayName:'Empate';
+  var cat=conf<55?'chaos':winner==='Empate'?'draw':'win';
+  var pool=QUOTES[cat];
+  return {
+    score:hG+'-'+aG, hG:hG, aG:aG, winner:winner, confidence:conf,
+    stars:Math.round(conf/20), probH:Math.round(pH*100), probA:Math.round(pA*100),
+    quote:pool[Math.floor(Math.random()*pool.length)].replace('{w}',winner)
+  };
+}
+function makeId(m,i){ return m.h+'-'+m.a+'-'+m.g+'-'+i; }
+
+/* ─── STORAGE (localStorage para persistir pronósticos) ─── */
+var STORAGE_KEY = 'oraculo_preds_v2';
+function loadPreds() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); } catch(e){ return {}; }
+}
+function savePreds(obj) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); } catch(e){}
+}
+
+/* ══════════════════════════════════════════
+   PULPO SVG
+══════════════════════════════════════════ */
+function OctopusSVG(props) {
+  var phase=props.phase;
+  var active=phase!=='idle', trance=phase==='trance'||phase==='consulting';
+  var ec=active?'#10F5A0':'#9F7AEA', ef=active?'#065F46':'#2D1B69', es=active?'#10F5A0':'#8B5CF6';
+  return (
+    <div style={{position:'relative',width:'100%',maxWidth:'220px',margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'center'}}>
+      {active && <div style={{position:'absolute',inset:0,borderRadius:'50%',background:'radial-gradient(ellipse,rgba(168,85,247,.22) 0%,transparent 70%)',animation:'pulse-glow 2.5s ease-in-out infinite'}}/>}
+      {active && [0,1,2].map(function(i){return(<div key={i} style={{position:'absolute',width:'110px',height:'110px',borderRadius:'50%',border:'1px solid rgba(168,85,247,.3)',animation:'ripple '+(2+i*.7)+'s ease-out '+(i*.4)+'s infinite'}}/>);})}
+      <svg viewBox="0 0 200 230" style={{width:'100%',maxWidth:'220px',
+        filter:active?'drop-shadow(0 0 16px rgba(168,85,247,.75)) drop-shadow(0 0 6px rgba(16,245,160,.3))':'drop-shadow(0 4px 18px rgba(0,0,0,.75))',
+        animation:trance?'float 3s ease-in-out infinite':'float 6s ease-in-out infinite',transition:'filter .8s ease'}}>
+        <defs>
+          <radialGradient id="bG" cx="40%" cy="35%" r="65%">
+            <stop offset="0%" stopColor="#3B1F6E"/><stop offset="50%" stopColor="#1E1050"/><stop offset="100%" stopColor="#0C0820"/>
+          </radialGradient>
+          <radialGradient id="sG" cx="38%" cy="28%" r="45%">
+            <stop offset="0%" stopColor="#7C4DCC" stopOpacity=".5"/><stop offset="100%" stopColor="#7C4DCC" stopOpacity="0"/>
+          </radialGradient>
+          <radialGradient id="eHL" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={ec} stopOpacity=".35"/><stop offset="100%" stopColor={ec} stopOpacity="0"/>
+          </radialGradient>
+          <radialGradient id="eHR" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={ec} stopOpacity=".35"/><stop offset="100%" stopColor={ec} stopOpacity="0"/>
+          </radialGradient>
+        </defs>
+        {/* Sombras tentáculos */}
+        <g opacity=".28">
+          <path d="M70,135 C50,158 38,178 34,208" stroke="#7C3AED" strokeWidth="9" fill="none" strokeLinecap="round"/>
+          <path d="M88,146 C72,174 74,196 68,216" stroke="#7C3AED" strokeWidth="8" fill="none" strokeLinecap="round"/>
+          <path d="M112,146 C128,174 126,196 132,216" stroke="#7C3AED" strokeWidth="8" fill="none" strokeLinecap="round"/>
+          <path d="M130,135 C150,158 162,178 166,208" stroke="#7C3AED" strokeWidth="9" fill="none" strokeLinecap="round"/>
+        </g>
+        {/* Tentáculos */}
+        {[
+          ["M66,132 C46,156 30,176 26,210 C24,220 30,222 34,215 C38,200 52,178 64,158",trance?'float 2.8s ease-in-out infinite':'float 6.5s ease-in-out infinite'],
+          ["M82,144 C68,172 66,196 60,218 C58,226 65,226 68,218 C72,196 76,172 86,146",trance?'float 3.2s ease-in-out infinite reverse':'float 7s ease-in-out infinite reverse'],
+          ["M100,148 C96,176 94,196 92,220 C91,228 99,229 100,220 C102,210 104,176 100,148",trance?'float 2.5s ease-in-out infinite':'float 6s ease-in-out infinite'],
+          ["M118,144 C132,172 134,196 140,218 C142,226 135,226 132,218 C128,196 124,172 114,146",trance?'float 3.5s ease-in-out infinite reverse':'float 7.5s ease-in-out infinite reverse'],
+          ["M134,132 C154,156 170,176 174,210 C176,220 170,222 166,215 C164,200 148,178 136,158",trance?'float 3s ease-in-out infinite':'float 6.8s ease-in-out infinite']
+        ].map(function(t,i){return(
+          <g key={i}>
+            <path d={t[0]} stroke="#5B21B6" strokeWidth="12" fill="none" strokeLinecap="round" style={{animation:t[1]}}/>
+            <path d={t[0]} stroke="#8B5CF6" strokeWidth="5"  fill="none" strokeLinecap="round" opacity=".55"/>
+          </g>
+        );})}
+        {/* Ventosas */}
+        {[[48,166],[40,188],[70,183],[64,205],[100,173],[100,198],[130,183],[136,205],[152,166],[160,188]].map(function(p,i){
+          return <circle key={i} cx={p[0]} cy={p[1]} r="3.5" fill="#1A0A3E" stroke="#A855F7" strokeWidth="1" opacity=".72"/>;
+        })}
+        {/* Cuerpo */}
+        <ellipse cx="100" cy="80" rx="56" ry="63" fill="url(#bG)" stroke="#7C3AED" strokeWidth="1.5"/>
+        <ellipse cx="100" cy="58" rx="38" ry="27" fill="url(#sG)"/>
+        <circle cx="80"  cy="70" r="13" fill="#4C1D95" opacity=".28"/>
+        <circle cx="120" cy="72" r="11" fill="#312E81" opacity=".22"/>
+        <circle cx="100" cy="108" r="20" fill="#1E1B4B" opacity=".28"/>
+        {[[83,114,4],[110,119,3.5],[95,127,5]].map(function(s,i){
+          return <circle key={i} cx={s[0]} cy={s[1]} r={s[2]} fill="none" stroke="#6D28D9" strokeWidth=".8" opacity=".3"/>;
+        })}
+        {/* Ojos */}
+        {[[78,86],[122,86]].map(function(e,i){
+          return(
+            <g key={i}>
+              <ellipse cx={e[0]} cy={e[1]} rx="14" ry="14" fill={i===0?"url(#eHL)":"url(#eHR)"}/>
+              <g style={{animation:'eyeBlink 4s ease-in-out '+(i===0?'0s':'.5s')+' infinite'}}>
+                <ellipse cx={e[0]} cy={e[1]} rx="11" ry="11" fill={ef} stroke={es} strokeWidth="1.5"/>
+                <ellipse cx={e[0]} cy={e[1]} rx="7"  ry="7"  fill={active?'#059669':'#4C1D95'}/>
+                <ellipse cx={e[0]} cy={e[1]} rx="4"  ry="4"  fill={ec}/>
+                <circle  cx={e[0]-4} cy={e[1]-4} r="2.2" fill="white" opacity=".9"/>
+              </g>
+            </g>
+          );
+        })}
+        {/* Boca */}
+        <path d="M90,112 Q100,120 110,112" stroke={active?'#10F5A0':'#8B5CF6'} strokeWidth="2" fill="none" strokeLinecap="round" opacity=".7"/>
+        {/* Corona */}
+        {active && [0,60,120,180,240,300].map(function(angle,i){
+          var r=angle*Math.PI/180;
+          return(<circle key={i} cx={100+52*Math.cos(r)} cy={33+18*Math.sin(r)} r="2"
+            fill={i%2===0?'#A855F7':'#10F5A0'}
+            style={{animation:'starTwinkle '+(1.2+i*.3)+'s ease-in-out '+(i*.2)+'s infinite'}}/>);
+        })}
+      </svg>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   OVERLAY DE CONSULTA (pantalla completa durante el trance)
+══════════════════════════════════════════ */
+function OracleOverlay(props) {
+  var tranceMsg=props.tranceMsg, match=props.match;
+  return (
+    <div className="oracle-overlay">
+      <div style={{textAlign:'center',padding:'0 1.5rem'}}>
+        <p style={{fontSize:'10px',letterSpacing:'.25em',color:'rgba(168,85,247,.65)',
+          textTransform:'uppercase',marginBottom:'.5rem',fontFamily:'var(--font-body)'}}>
+          Consultando al Oráculo
+        </p>
+        <p style={{fontFamily:'var(--font-heading)',fontSize:'1rem',fontWeight:700,
+          color:'rgba(255,255,255,.85)',marginBottom:'.25rem'}}>
+          {match.home} vs {match.away}
+        </p>
+      </div>
+      <OctopusSVG phase="trance"/>
+      <p style={{fontSize:'11px',fontFamily:'monospace',color:'rgba(168,85,247,.85)',letterSpacing:'.05em',textAlign:'center'}}>
+        ⬡ {tranceMsg}
+      </p>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   TARJETA DE RESULTADO (partido con pronóstico)
+══════════════════════════════════════════ */
+function ResultCard(props) {
+  var match=props.match, pred=props.pred, onConfirm=props.onConfirm;
+  var isHome=pred.winner===match.home, isAway=pred.winner===match.away;
+
+  /* resultado real confirmado */
+  var confirmed=pred.confirmed; /* null | 'win' | 'loss' | 'draw' */
+  var confirmLabel = confirmed==='win'  ? '✓ Acertado'   :
+                     confirmed==='loss' ? '✗ Falló'       :
+                     confirmed==='draw' ? '~ Empate real' : null;
+
+  return (
+    <div className="result-card">
+      {/* Línea top */}
+      <div style={{position:'absolute',top:0,left:'8%',right:'8%',height:'1px',
+        background:'linear-gradient(90deg,transparent,rgba(16,245,160,.55),transparent)'}}/>
+
+      {/* Header */}
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'.75rem'}}>
+        <span style={{fontSize:'9px',letterSpacing:'.12em',color:'rgba(168,85,247,.7)',fontWeight:600}}>
+          GRUPO {match.group} · {match.date}
+        </span>
+        {confirmed ? (
+          <span className={'confirm-badge confirmed-'+confirmed} style={{fontSize:'9px'}}>
+            {confirmLabel}
+          </span>
+        ) : (
+          <span style={{fontSize:'9px',color:'rgba(16,245,160,.55)',letterSpacing:'.1em'}}>🔮 SELLADO</span>
+        )}
+      </div>
+
+      {/* Equipos + score */}
+      <div style={{display:'flex',alignItems:'center',gap:'6px',marginBottom:'.8rem'}}>
+        <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:'4px'}}>
+          <img src={flagUrl(match.homeCode)} alt={match.home}
+            style={{width:'40px',height:'28px',objectFit:'cover',borderRadius:'5px',
+              border:isHome?'1.5px solid rgba(16,245,160,.8)':'1px solid rgba(255,255,255,.1)',
+              boxShadow:isHome?'0 0 10px rgba(16,245,160,.4)':'none'}}
+            onError={function(e){e.target.style.display='none';}}/>
+          <span style={{fontSize:'11px',fontWeight:600,color:isHome?'#10F5A0':'#C4C9E0',
+            textAlign:'center',maxWidth:'68px',overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}}>
+            {match.home}
+          </span>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'2px',minWidth:'68px'}}>
+          <span className="score-gradient" style={{fontSize:'26px',fontWeight:800,letterSpacing:'2px',lineHeight:1}}>
+            {pred.score}
+          </span>
+          {pred.winner==='Empate'
+            ? <span style={{fontSize:'9px',color:'rgba(168,85,247,.85)',background:'rgba(168,85,247,.1)',
+                border:'1px solid rgba(168,85,247,.25)',borderRadius:'4px',padding:'1px 5px',fontWeight:600}}>EMPATE</span>
+            : <span style={{fontSize:'9px',color:'rgba(16,245,160,.6)',letterSpacing:'.1em'}}>marcador</span>
+          }
+        </div>
+        <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:'4px'}}>
+          <img src={flagUrl(match.awayCode)} alt={match.away}
+            style={{width:'40px',height:'28px',objectFit:'cover',borderRadius:'5px',
+              border:isAway?'1.5px solid rgba(16,245,160,.8)':'1px solid rgba(255,255,255,.1)',
+              boxShadow:isAway?'0 0 10px rgba(16,245,160,.4)':'none'}}
+            onError={function(e){e.target.style.display='none';}}/>
+          <span style={{fontSize:'11px',fontWeight:600,color:isAway?'#10F5A0':'#C4C9E0',
+            textAlign:'center',maxWidth:'68px',overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}}>
+            {match.away}
+          </span>
+        </div>
+      </div>
+
+      {/* Barra de probabilidad */}
+      <div style={{marginBottom:'.7rem'}}>
+        <div style={{display:'flex',justifyContent:'space-between',marginBottom:'3px'}}>
+          <span style={{fontSize:'10px',color:'rgba(16,245,160,.85)',fontWeight:700}}>{pred.probH}%</span>
+          <span style={{fontSize:'10px',color:'rgba(255,255,255,.25)'}}>probabilidad</span>
+          <span style={{fontSize:'10px',color:'rgba(168,85,247,.85)',fontWeight:700}}>{pred.probA}%</span>
+        </div>
+        <div style={{height:'4px',background:'rgba(255,255,255,.06)',borderRadius:'2px',overflow:'hidden'}}>
+          <div style={{height:'100%',width:pred.probH+'%',borderRadius:'2px',
+            background:'linear-gradient(90deg,rgba(16,245,160,.85),rgba(56,189,248,.6))'}}/>
+        </div>
+      </div>
+
+      {/* Confianza */}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',
+        background:'rgba(0,0,0,.25)',borderRadius:'10px',padding:'.4rem .7rem',
+        border:'1px solid rgba(255,255,255,.04)',marginBottom:'.65rem'}}>
+        <div style={{display:'flex',gap:'3px'}}>
+          {[0,1,2,3,4].map(function(i){
+            return <span key={i} style={{fontSize:'12px',opacity:i<pred.stars?1:.18,
+              filter:i<pred.stars?'drop-shadow(0 0 4px rgba(16,245,160,.8))':'none'}}>✦</span>;
+          })}
+        </div>
+        <span style={{fontSize:'11px',fontWeight:700,
+          color:pred.confidence>=75?'#10F5A0':pred.confidence>=60?'#A855F7':'#F59E0B'}}>
+          {pred.confidence}% confianza
+        </span>
+      </div>
+
+      {/* Frase */}
+      <div style={{borderLeft:'2px solid rgba(168,85,247,.4)',paddingLeft:'.65rem',marginBottom:'.85rem'}}>
+        <p style={{fontSize:'11px',color:'rgba(196,201,224,.85)',fontStyle:'italic',lineHeight:1.55,margin:0}}>
+          "{pred.quote}"
+        </p>
+      </div>
+
+      {/* Botones de confirmación (solo si no confirmado) */}
+      {!confirmed && (
+        <div>
+          <p style={{fontSize:'10px',color:'rgba(255,255,255,.3)',textAlign:'center',marginBottom:'.5rem',letterSpacing:'.08em'}}>
+            ¿YA JUGARON? CONFIRMA EL RESULTADO REAL
+          </p>
+          <div style={{display:'flex',gap:'6px',justifyContent:'center',flexWrap:'wrap'}}>
+            <button className="confirm-badge win"  onClick={function(){onConfirm('win');}}>✓ Acertó el Oráculo</button>
+            <button className="confirm-badge draw" onClick={function(){onConfirm('draw');}}>~ Empate real</button>
+            <button className="confirm-badge loss" onClick={function(){onConfirm('loss');}}>✗ Falló el Oráculo</button>
+          </div>
+        </div>
+      )}
+
+      {/* Línea bottom */}
+      <div style={{position:'absolute',bottom:0,left:'8%',right:'8%',height:'1px',
+        background:'linear-gradient(90deg,transparent,rgba(168,85,247,.3),transparent)'}}/>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   APP
+══════════════════════════════════════════ */
+function App() {
+  var useState    = React.useState;
+  var useEffect   = React.useEffect;
+  var useMemo     = React.useMemo;
+  var useCallback = React.useCallback;
+
+  /* Estado persistente de predicciones: { [matchId]: {score,winner,...,confirmed} } */
+  var predsState = useState(loadPreds);
+  var preds = predsState[0]; var setPreds = predsState[1];
+
+  var dateState = useState('16 Jun 2026');
+  var date = dateState[0]; var setDate = dateState[1];
+
+  /* Partido seleccionado para consultar */
+  var selectedState = useState(null);
+  var selectedId = selectedState[0]; var setSelectedId = selectedState[1];
+
+  /* Estado de consulta: idle | consulting | trance */
+  var phaseState = useState('idle');
+  var phase = phaseState[0]; var setPhase = phaseState[1];
+
+  var tranceState = useState(0);
+  var tranceIdx = tranceState[0]; var setTrancIdx = tranceState[1];
+
+  /* Partidos del día seleccionado */
+  var matches = useMemo(function(){
+    return MATCHUPS
+      .filter(function(m){ return m.d===date; })
+      .map(function(m,i){
+        return { id:makeId(m,i), home:tn(m.h), away:tn(m.a), homeCode:m.h, awayCode:m.a, group:m.g, date:m.d };
+      });
+  },[date]);
+
+  /* Partido actualmente seleccionado */
+  var selectedMatch = useMemo(function(){
+    return matches.find(function(m){ return m.id===selectedId; }) || null;
+  },[matches, selectedId]);
+
+  /* Trance ticker */
+  useEffect(function(){
+    if(phase!=='trance') return;
+    var t=setInterval(function(){ setTrancIdx(function(p){ return (p+1)%TRANCE.length; }); },1400);
+    return function(){ clearInterval(t); };
+  },[phase]);
+
+  /* Persistir cambios */
+  useEffect(function(){ savePreds(preds); },[preds]);
+
+  /* Seleccionar partido (solo si no tiene pronóstico) */
+  var handleSelect = function(matchId){
+    if(preds[matchId]) return; /* ya tiene pronóstico: no hacer nada */
+    if(phase!=='idle') return;
+    setSelectedId(function(prev){ return prev===matchId?null:matchId; });
+  };
+
+  /* Ejecutar consulta */
+  var handleConsult = useCallback(function(){
+    if(!selectedMatch) return;
+    if(preds[selectedMatch.id]) return;
+    if(phase!=='idle') return;
+
+    setPhase('consulting');
+    setTimeout(function(){ setPhase('trance'); }, 500);
+
+    /* Cálculo inmediato, mostrar tras animación */
+    var result = predict(selectedMatch.home, selectedMatch.away);
+    setTimeout(function(){
+      setPreds(function(prev){
+        var next = Object.assign({}, prev);
+        next[selectedMatch.id] = Object.assign({}, result, { confirmed: null });
+        return next;
+      });
+      setPhase('idle');
+      setSelectedId(null);
+    }, 3800);
+  },[selectedMatch, preds, phase]);
+
+  /* Confirmar resultado real */
+  var handleConfirm = function(matchId, verdict){
+    setPreds(function(prev){
+      var next = Object.assign({}, prev);
+      if(next[matchId]) next[matchId] = Object.assign({}, next[matchId], { confirmed: verdict });
+      return next;
+    });
+  };
+
+  /* Separar partidos en: con pronóstico vs sin pronóstico */
+  var matchesWithPred    = matches.filter(function(m){ return !!preds[m.id]; });
+  var matchesWithoutPred = matches.filter(function(m){ return !preds[m.id]; });
+
+  var busy = phase==='consulting'||phase==='trance';
+  var canConsult = selectedId && !preds[selectedId] && !busy;
+
+  /* Estrellas de fondo */
+  var stars = useMemo(function(){
+    return Array.from({length:35},function(){
+      return {x:Math.random()*100,y:Math.random()*100,r:.5+Math.random()*1.5,d:2+Math.random()*4,delay:Math.random()*3};
+    });
+  },[]);
+
+  return (
+    <div style={{minHeight:'100vh',background:'var(--bg-deep)',position:'relative',overflowX:'hidden',paddingBottom:'3rem'}}>
+
+      {/* Estrellas */}
+      <svg style={{position:'fixed',inset:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:0}} aria-hidden="true">
+        {stars.map(function(s,i){
+          return <circle key={i} cx={s.x+'%'} cy={s.y+'%'} r={s.r} fill="white"
+            style={{animation:'starTwinkle '+s.d+'s ease-in-out '+s.delay+'s infinite'}}/>;
+        })}
+      </svg>
+      <div style={{position:'fixed',top:'-20%',left:'-20%',width:'60%',height:'60%',
+        borderRadius:'50%',background:'radial-gradient(circle,rgba(88,28,135,.18) 0%,transparent 70%)',
+        pointerEvents:'none',zIndex:0,animation:'pulse-glow 6s ease-in-out infinite'}}/>
+      <div style={{position:'fixed',bottom:'-15%',right:'-15%',width:'55%',height:'55%',
+        borderRadius:'50%',background:'radial-gradient(circle,rgba(5,150,105,.12) 0%,transparent 70%)',
+        pointerEvents:'none',zIndex:0,animation:'pulse-glow 8s ease-in-out 2s infinite'}}/>
+
+      {/* Overlay de consulta (pantalla completa) */}
+      {busy && selectedMatch && (
+        <OracleOverlay tranceMsg={TRANCE[tranceIdx]} match={selectedMatch}/>
+      )}
+
+      <div style={{maxWidth:'430px',margin:'0 auto',padding:'0 1rem',position:'relative',zIndex:1}}>
+
+        {/* HEADER */}
+        <header style={{textAlign:'center',paddingTop:'1.8rem',paddingBottom:'.5rem'}}>
+          <div style={{fontSize:'10px',letterSpacing:'.28em',color:'rgba(168,85,247,.65)',fontWeight:600,marginBottom:'.4rem',textTransform:'uppercase'}}>
+            FIFA World Cup 2026 · Predictor
+          </div>
+          <h1 className="title-gradient" style={{fontFamily:'var(--font-title)',
+            fontSize:'clamp(1.3rem,6vw,1.75rem)',fontWeight:900,lineHeight:1.12,marginBottom:'.3rem'}}>
+            El Oráculo<br/>del Pulpo
+          </h1>
+          <p style={{fontSize:'11px',color:'rgba(196,201,224,.4)',fontStyle:'italic'}}>
+            "Selecciona un partido para invocar la visión"
+          </p>
+        </header>
+
+        {/* PULPO (visible solo cuando no hay overlay) */}
+        {!busy && (
+          <section style={{padding:'1rem 0 .5rem'}}>
+            <OctopusSVG phase={selectedId&&!preds[selectedId]?'active':'idle'}/>
+          </section>
+        )}
+
+        {/* PANEL PRINCIPAL */}
+        <section className="panel" style={{marginBottom:'1.25rem'}}>
+
+          {/* Selector de fecha */}
+          <div style={{marginBottom:'.9rem'}}>
+            <label style={{display:'block',fontSize:'10px',fontWeight:600,letterSpacing:'.12em',
+              color:'rgba(168,85,247,.65)',textTransform:'uppercase',marginBottom:'.4rem'}}>
+              Fecha
+            </label>
+            <div style={{position:'relative'}}>
+              <select value={date} onChange={function(e){
+                setDate(e.target.value); setSelectedId(null); setPhase('idle');
+              }}>
+                {DATES.map(function(d){ return <option key={d} value={d}>{d}</option>; })}
+              </select>
+              <span style={{position:'absolute',right:'10px',top:'50%',transform:'translateY(-50%)',
+                color:'rgba(168,85,247,.6)',pointerEvents:'none',fontSize:'11px'}}>▼</span>
+            </div>
+          </div>
+
+          {/* Lista de partidos SIN pronóstico */}
+          {matchesWithoutPred.length > 0 && (
+            <div style={{marginBottom:'.9rem'}}>
+              <p style={{fontSize:'10px',fontWeight:600,letterSpacing:'.1em',
+                color:'rgba(255,255,255,.25)',marginBottom:'.5rem',textTransform:'uppercase'}}>
+                Selecciona un partido
+              </p>
+              <div style={{display:'flex',flexDirection:'column',gap:'6px'}}>
+                {matchesWithoutPred.map(function(m){
+                  var isSel = selectedId===m.id;
+                  return (
+                    <div key={m.id}
+                      className={'match-pill'+(isSel?' selected':'')}
+                      onClick={function(){ handleSelect(m.id); }}>
+                      {/* Efecto shine al seleccionar */}
+                      {isSel && <div style={{position:'absolute',inset:0,borderRadius:'14px',overflow:'hidden',pointerEvents:'none'}}>
+                        <div style={{position:'absolute',top:0,left:'-100%',width:'60%',height:'100%',
+                          background:'linear-gradient(90deg,transparent,rgba(168,85,247,.15),transparent)',
+                          animation:'shine 1.8s ease-in-out infinite'}}/>
+                      </div>}
+
+                      <div style={{display:'flex',alignItems:'center',gap:'6px',flex:1}}>
+                        <img src={flagUrl(m.homeCode)} alt={m.home}
+                          style={{width:'26px',height:'18px',objectFit:'cover',borderRadius:'3px',flexShrink:0}}
+                          onError={function(e){e.target.style.display='none';}}/>
+                        <span style={{fontSize:'12px',fontWeight:600,color:'#E9D5FF',
+                          overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis',maxWidth:'70px'}}>
+                          {m.home}
+                        </span>
+                        <span style={{fontSize:'10px',color:'rgba(255,255,255,.3)',fontWeight:700,flexShrink:0}}>vs</span>
+                        <img src={flagUrl(m.awayCode)} alt={m.away}
+                          style={{width:'26px',height:'18px',objectFit:'cover',borderRadius:'3px',flexShrink:0}}
+                          onError={function(e){e.target.style.display='none';}}/>
+                        <span style={{fontSize:'12px',fontWeight:600,color:'#E9D5FF',
+                          overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis',maxWidth:'70px'}}>
+                          {m.away}
+                        </span>
+                      </div>
+
+                      <div style={{display:'flex',alignItems:'center',gap:'4px',flexShrink:0}}>
+                        <span style={{fontSize:'9px',color:'rgba(168,85,247,.6)',
+                          background:'rgba(168,85,247,.08)',border:'1px solid rgba(168,85,247,.2)',
+                          borderRadius:'5px',padding:'1px 5px',fontWeight:600}}>G·{m.group}</span>
+                        {isSel
+                          ? <span style={{fontSize:'14px'}}>🔮</span>
+                          : <span style={{fontSize:'11px',color:'rgba(255,255,255,.2)'}}>›</span>
+                        }
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Botón consultar */}
+          <button className={'btn-oracle'+(canConsult?' ready':'')}
+            onClick={handleConsult}
+            disabled={!canConsult}>
+            {busy
+              ? <><span style={{display:'inline-block',animation:'orb-spin 1.2s linear infinite',fontSize:'16px'}}>◌</span><span>El Oráculo consulta...</span></>
+              : selectedId && !preds[selectedId]
+                ? <><span>🔮</span><span>Invocar la Visión</span></>
+                : <><span>🌊</span><span>Selecciona un partido</span></>
+            }
+          </button>
+        </section>
+
+        {/* PRONÓSTICOS GENERADOS */}
+        {matchesWithPred.length > 0 && (
+          <section>
+            <div style={{textAlign:'center',marginBottom:'1rem'}}>
+              <p style={{fontFamily:'var(--font-heading)',fontSize:'1rem',fontWeight:700,
+                background:'linear-gradient(135deg,#A855F7,#10F5A0)',
+                WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>
+                Visiones del Oráculo
+              </p>
+              <div style={{height:'1px',width:'70px',margin:'4px auto 0',
+                background:'linear-gradient(90deg,transparent,rgba(16,245,160,.5),transparent)'}}/>
+            </div>
+            <div style={{display:'flex',flexDirection:'column',gap:'1rem'}}>
+              {matchesWithPred.map(function(m){
+                return (
+                  <ResultCard key={m.id} match={m} pred={preds[m.id]}
+                    onConfirm={function(verdict){ handleConfirm(m.id, verdict); }}/>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* Mensaje si no hay partidos */}
+        {matches.length===0 && (
+          <div style={{textAlign:'center',padding:'2rem 1rem',color:'rgba(255,255,255,.25)',fontSize:'13px'}}>
+            No hay partidos registrados en esta fecha.
+          </div>
+        )}
+
+        <footer style={{textAlign:'center',paddingTop:'2rem'}}>
+          <p style={{fontSize:'9px',letterSpacing:'.2em',color:'rgba(255,255,255,.1)',textTransform:'uppercase'}}>
+            Oráculo del Pulpo · Mundial 2026 · Solo entretenimiento
+          </p>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+var container = document.getElementById('root');
+var reactRoot = ReactDOM.createRoot(container);
+reactRoot.render(React.createElement(App, null));
+</script>
+
+<script>
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',function(){
+      navigator.serviceWorker.register('./sw.js')
+        .then(function(r){console.log('SW OK:',r.scope);})
+        .catch(function(e){console.warn('SW error:',e);});
+    });
+  }
+</script>
+</body>
+</html>
